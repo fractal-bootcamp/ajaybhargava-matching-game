@@ -56,7 +56,7 @@ export default function Home({ actionData }: Route.ComponentProps) {
 			return;
 		}
 		socket.emit("gamePlayer", roomId, playerName);
-		return redirect(`/start/play/${roomId}`);
+		return redirect(`/start/${roomId}/play`);
 	};
 
 	return (
@@ -81,7 +81,6 @@ export default function Home({ actionData }: Route.ComponentProps) {
 
 			<div className="grid grid-cols-1 gap-4 w-full max-w-md">
 				{rooms.map((roomId: string) => {
-					const roomStatus = roomStatuses[roomId];
 					return (
 						<RoomStatuses
 							key={roomId}

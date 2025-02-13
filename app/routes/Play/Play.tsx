@@ -9,10 +9,8 @@ import { useLoaderData } from "react-router";
 const socket = io(`${import.meta.env.VITE_RENDER_PUBLIC_URL}`);
 
 export async function loader({ params }: Route.LoaderArgs) {
-	const identifier = params.roomId;
-	if (!identifier) {
-		throw new Error("Route ID not found.");
-	}
+	if (!params.id) throw new Error("Game ID is required.");
+	const identifier = params.id;
 	return identifier;
 }
 
