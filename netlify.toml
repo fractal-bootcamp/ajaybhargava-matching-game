@@ -1,6 +1,6 @@
 [build]
-command = "npm run build"
+command = "react-router build"
 publish = "build/client"
 
 [dev]
-command = "npm run dev"
+command = "react-router dev"

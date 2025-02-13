@@ -5,7 +5,7 @@ import type { GameRoom } from "~/types/lobby";
 import { RoomStatuses } from "~/components/GameLobby";
 import { redirect } from "react-router";
 
-const socket = io(`${process.env.VITE_RENDER_PUBLIC_URL}`);
+const socket = io(`${import.meta.env.VITE_RENDER_PUBLIC_URL}`);
 
 export default function Home({ actionData }: Route.ComponentProps) {
 	const [rooms, setRooms] = useState<string[]>([]);
