@@ -9,8 +9,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Deployment Port
 const PORT = process.env.PORT || 3001;
-const ORIGINS = [...(process.env.NETLIFY_DOMAIN ? [process.env.NETLIFY_DOMAIN] : [])]
-
+const ORIGINS = [
+    'http://localhost:3001',
+    ...(import.meta.env.VITE_NETLIFY_DOMAIN ? [import.meta.env.VITE_NETLIFY_DOMAIN] : [])
+  ];
 // Server Deployable Game State
 const gameState: GameState = initializeGame(5, [
     {

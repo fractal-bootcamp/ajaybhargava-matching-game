@@ -10,6 +10,7 @@
     "server": "bun run app/server/server.ts --watch"
   },
   "dependencies": {
+    "@react-router/dev": "latest",
     "@react-router/node": "^7.1.5",
     "@react-router/serve": "^7.1.5",
     "@types/express": "^5.0.0",

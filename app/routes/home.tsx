@@ -1,4 +1,4 @@
-import type { Route } from "./+types/Home";
+import type { Route } from "../+types/root";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import type { GameRoom } from "~/types/lobby";
