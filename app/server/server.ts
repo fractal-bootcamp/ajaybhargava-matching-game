@@ -9,9 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Deployment Port
 const PORT = process.env.PORT || 3001;
-const ORIGINS = ['http://localhost:5173',
-    ...(process.env.RENDER_EXTERNAL_URL ? [process.env.RENDER_EXTERNAL_URL] : []),
-    ...(process.env.NETLIFY_DOMAIN ? [process.env.NETLIFY_DOMAIN] : [])]
+const ORIGINS = [...(process.env.NETLIFY_DOMAIN ? [process.env.NETLIFY_DOMAIN] : [])]
 
 // Server Deployable Game State
 const gameState: GameState = initializeGame(5, [
