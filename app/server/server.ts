@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 // Deployment Port
 const PORT = process.env.PORT || 3001;
 const ORIGINS = [
-    'http://localhost:3001',
+    'http://localhost:5173',
     ...(import.meta.env.VITE_NETLIFY_DOMAIN ? [import.meta.env.VITE_NETLIFY_DOMAIN] : [])
   ];
 // Server Deployable Game State
