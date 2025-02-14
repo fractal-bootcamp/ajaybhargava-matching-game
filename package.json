@@ -10,6 +10,7 @@
     "server": "bun run app/server/server.ts --watch"
   },
   "dependencies": {
+    "@clerk/react-router": "^1.0.8",
     "@react-router/dev": "latest",
     "@react-router/node": "^7.1.5",
     "@react-router/serve": "^7.1.5",
@@ -25,7 +26,6 @@
   },
   "devDependencies": {
     "@netlify/vite-plugin-react-router": "^1.0.0",
-    "@react-router/dev": "^7.1.5",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^20",
     "@types/react": "^19.0.1",

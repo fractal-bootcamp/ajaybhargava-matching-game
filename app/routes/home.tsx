@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { GameRoom } from "~/types/lobby";
+import type { Route } from "../+types/root";
 import { RoomStatuses } from "~/components/GameLobby";
 import { useNavigate } from "react-router";
 import { socket } from "~/server/socket";
