@@ -1,7 +1,6 @@
 import express  from 'express';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
-import cors from 'cors';
 import type { GameState, Card, GridPosition } from '../types/game';
 import { handleCardSelection, initializeGame } from '~/utils/gameUtils';
 import type { GameRoom, Lobby, Player } from '~/types/lobby';
