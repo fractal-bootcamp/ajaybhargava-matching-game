@@ -9,6 +9,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Deployment Port
 const PORT = process.env.PORT || 3001;
+const allowedOrigins = ['http://localhost:5173', `${import.meta.env.VITE_NETLIFY_DOMAIN}`, `${import.meta.env.VITE_RENDER_PUBLIC_URL}`];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
 
 // Server Deployable Game State
 const gameState: GameState = initializeGame(5, [
@@ -30,7 +35,7 @@ const GameLobby: Lobby = {
 const app = express();
 // Non Socket Server
 app.use(cors({ 
-    origin: ['http://localhost:5173', `${import.meta.env.VITE_NETLIFY_DOMAIN}`],
+    origin: allowedOrigins,
     credentials: true 
 }));
 app.get('/', (req, res) => { 
@@ -39,7 +44,7 @@ app.get('/', (req, res) => {
 const HttpServer = createServer(app);
 const io = new Server(HttpServer, {
     cors: {
-        origin: ['http://localhost:5173', `${import.meta.env.VITE_NETLIFY_DOMAIN}`],
+        origin: allowedOrigins,
         methods: ['GET', 'POST'],
         credentials: true, 
     },
