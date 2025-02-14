@@ -5,12 +5,14 @@ interface RoomStatusProps {
 	roomId: string;
 	roomStatuses: Record<string, Omit<GameRoom, "gameState">>;
 	onRoomJoin: (roomId: string) => void;
+	playerName: string;
 }
 
 export function RoomStatuses({
 	roomId,
 	roomStatuses,
 	onRoomJoin,
+	playerName,
 }: RoomStatusProps) {
 	const roomStatus = roomStatuses[roomId];
 	return (
@@ -28,13 +30,13 @@ export function RoomStatuses({
 					</div>
 				</div>
 				{(!roomStatus || roomStatus.players.length < 2) && (
-					<NavLink
-						to={`/start/play/${roomId}`}
+					<button
 						onClick={() => onRoomJoin(roomId)}
+						type="button"
 						className="bg-green-500 text-white px-4 py-2 rounded"
 					>
 						Join
-					</NavLink>
+					</button>
 				)}
 			</div>
 		</div>
