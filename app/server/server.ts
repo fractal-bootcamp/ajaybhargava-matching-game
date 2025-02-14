@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 const HttpServer = createServer(app);
 const io = new Server(HttpServer, {
     cors: {
-        origin: ['http://localhost:5173', `${import.meta.env.VITE_NETLIFY_DOMAIN}`, `${import.meta.env.VITE_RENDER_PUBLIC_URL}`, "*"],
+        origin: `${import.meta.env.VITE_NETLIFY_DOMAIN}`,
         methods: ['GET', 'POST'],
     },
 })
