@@ -136,6 +136,5 @@ export function handleCardSelection(
 	if (newState.selectedCards.length === 2) {
 		return handleMatch(newState);
 	}
-
 	return newState;
 }

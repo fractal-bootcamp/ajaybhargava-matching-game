@@ -1,23 +1,20 @@
-import type { Route } from "../+types/root";
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
 import type { GameRoom } from "~/types/lobby";
 import { RoomStatuses } from "~/components/GameLobby";
-import { redirect } from "react-router";
+import { useNavigate } from "react-router";
+import { socket } from "~/server/socket";
 
-const socket = io(`${import.meta.env.VITE_RENDER_PUBLIC_URL}`);
-
-export default function Home({ actionData }: Route.ComponentProps) {
+export default function Home() {
 	const [rooms, setRooms] = useState<string[]>([]);
 	const [playerName, setPlayerName] = useState("");
 	const [roomStatuses, setRoomStatuses] = useState<
 		Record<string, Omit<GameRoom, "gameState">>
 	>({});
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		// Request initial room list
 		socket.emit("getRooms");
-
 		socket.on(
 			"roomList",
 			(
@@ -56,7 +53,7 @@ export default function Home({ actionData }: Route.ComponentProps) {
 			return;
 		}
 		socket.emit("gamePlayer", roomId, playerName);
-		return redirect(`/start/${roomId}/play`);
+		navigate(`/start/${roomId}/play`);
 	};
 
 	return (
@@ -87,6 +84,7 @@ export default function Home({ actionData }: Route.ComponentProps) {
 							roomId={roomId}
 							roomStatuses={roomStatuses}
 							onRoomJoin={handleJoinRoom}
+							playerName={playerName}
 						/>
 					);
 				})}

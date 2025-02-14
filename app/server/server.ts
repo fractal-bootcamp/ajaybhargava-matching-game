@@ -51,9 +51,9 @@ const io = new Server(HttpServer, {
 // Add reset timer function on server
 function resetSelectedCards(roomId: string) {
     const room = GameLobby.rooms.get(roomId);
-    if (room) {
+    if (room?.gameState) {
         room.gameState = {
-            ...gameState,
+            ...room.gameState,
             selectedCards: []
         };
         io.to(roomId).emit('gameUpdate', room.gameState);
@@ -93,13 +93,11 @@ io.on('connection', (socket) => {
         }
         if (newGame) {
             GameLobby.rooms.set(identifier, matchGame);
-            console.log(`Created new game room: ${identifier}`);
             socket.emit("newGameCreated", identifier);
         }
     });
 
     socket.on('gamePlayer', (roomId: string, playerName: string) => {
-        console.log(`Player ${playerName} attempting to join room ${roomId}`);
         const room = GameLobby.rooms.get(roomId);
         
         if (!room) {
@@ -133,7 +131,6 @@ io.on('connection', (socket) => {
 
         // Update room status
         if (room.players.length === room.maxPlayers) {
-            console.log(`Room ${roomId} is full and ready to start`);
             const playerNames = room.players.map(player => ({
                 name: player.name,
                 score: 0
@@ -145,7 +142,7 @@ io.on('connection', (socket) => {
             room.status = "waiting";
         }
         
-        // Emit room status to all players in the room. 
+        // Emit room status to all players in room. 
         io.to(roomId).emit('roomUpdate', roomId, {
             roomId,
             players: room.players,
@@ -154,35 +151,39 @@ io.on('connection', (socket) => {
             gamesize: room.gamesize
         });
     });
-    socket.emit('gameUpdate', gameState); 
-    socket.on('playerMove', (roomId: string, card: Card, position: GridPosition) => {
-        console.log(`Player move in room ${roomId}:`, { card, position });
+    socket.on('playerMove', (roomId: string, card: Card, position: GridPosition, socketId: string) => {
         const room = GameLobby.rooms.get(roomId);
-        console.log(room);
-        
         if (!room || !room.gameState) {
+            console.log('Room validation failed:', { 
+                roomExists: !!room, 
+                hasGameState: room ? !!room.gameState : false 
+            });
             socket.emit('error', 'Room not found nor game is initialized');
             return;
         }
 
-        // Update the game state for the specific room
-        room.gameState = handleCardSelection(room.gameState, card, position);
-        io.to(roomId).emit('gameUpdate', room.gameState);
+        // Find the player index based on socket ID
+        const playerIndex = room.players.findIndex(player => player.socketId === socketId);
+        const isCurrentPlayer = playerIndex === room.gameState.currentPlayer;
 
-        // If two cards are selected, start the reset timer
+        if (!isCurrentPlayer) {
+            const playerName = room.players[playerIndex]?.name || 'Unknown player';
+            const currentPlayerName = room.players[room.gameState.currentPlayer]?.name || 'Unknown player';
+            console.log(`Move rejected: ${playerName} attempted to play out of turn. Current player should be ${currentPlayerName}`);
+            socket.emit('NotYourTurn');
+            return;
+        }
+
+        room.gameState = handleCardSelection(room.gameState, card, position);        
+        io.to(roomId).emit('gameUpdate', room.gameState);
         if (room.gameState.selectedCards.length === 2) {
             setTimeout(() => {
                 resetSelectedCards(roomId);
             }, 500);
         }
     });
-
-    // Disconnect Game
-    socket.on('disconnect', () => {
-        console.log("Player Disconnected", socket.id);
-    })
 })
 
 HttpServer.listen(PORT, () => {
-    console.log(`🚀 Backend is listening on {http://localhost:${PORT}}`)
+    console.log(`🚀 Backend is listening on http://localhost:${PORT}`)
 })

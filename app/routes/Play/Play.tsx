@@ -3,53 +3,38 @@ import type { Route } from "../../+types/root";
 import type { Card, GridPosition } from "../../types/game";
 import { initializeGame } from "../../utils/gameUtils";
 import { CardGrid } from "../../components/CardGrid";
-import { io } from "socket.io-client";
 import { useLoaderData } from "react-router";
-
-const socket = io(`${import.meta.env.VITE_RENDER_PUBLIC_URL}`);
+import { socket } from "~/server/socket";
 
 export async function loader({ params }: Route.LoaderArgs) {
 	if (!params.id) throw new Error("Game ID is required.");
-	const identifier = params.id;
-	return identifier;
+	return { roomId: params.id };
 }
 
 export default function Play() {
-	const roomIdentifier = useLoaderData<typeof loader>();
-	console.log(roomIdentifier);
+	const { roomId } = useLoaderData<typeof loader>();
 	const [gameState, setGameState] = useState(() =>
 		initializeGame(5, [
 			{ name: "P1", score: 0 },
 			{ name: "P2", score: 0 },
 		]),
 	);
-	useEffect(() => {
-		// Join a Room Socket
-		const handleRoomJoin = (identifier: string) => {
-			socket.emit("gamePlayer", identifier, "P1");
-			socket.emit("gamePlayer", identifier, "P2");
-		};
-		// Listen for game updates
-		const handleGameUpdate = (serverState: typeof gameState) => {
-			console.log("Received game update:", serverState);
-			setGameState(serverState);
-		};
 
-		socket.on("newGameCreated", handleRoomJoin);
-		socket.on("gameUpdate", handleGameUpdate);
-		socket.on("connect", () => {
-			console.log("Connected to socket server");
+	useEffect(() => {
+		socket.on("gameUpdate", (serverState) => {
+			setGameState(serverState);
+		});
+		socket.on("NotYourTurn", () => {
+			console.log("Not your turn! Stop it.");
 		});
 	}, []);
 
-	// Action That Handles the CardClick
 	const handleCardClick = (card: Card, position: GridPosition) => {
-		if (roomIdentifier) {
-			console.log("Emitting playerMove:", { roomIdentifier, card, position });
-			socket.emit("playerMove", roomIdentifier, card, position);
-		} else {
+		if (!roomId) {
 			console.warn("Card clicked but no room ID available");
+			return;
 		}
+		socket.emit("playerMove", roomId, card, position, socket.id);
 	};
 
 	return (
@@ -66,7 +51,6 @@ export default function Play() {
 				))}
 			</div>
 
-			{/* Needs modifying when lobby concept is introduced. */}
 			<CardGrid gameState={gameState} onCardClick={handleCardClick} />
 		</div>
 	);
