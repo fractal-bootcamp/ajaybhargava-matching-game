@@ -28,18 +28,15 @@ const GameLobby: Lobby = {
 
 // Initialize Express Server
 const app = express();
-// Non Socket Server
-app.use(cors({ 
-    origin: ['http://localhost:5173', `${import.meta.env.VITE_NETLIFY_DOMAIN}`, `${import.meta.env.VITE_RENDER_PUBLIC_URL}`, "*"],
-    credentials: true 
-}));
 app.get('/', (req, res) => { 
     res.send("Hello World.")
 })
+
+
 const HttpServer = createServer(app);
 const io = new Server(HttpServer, {
     cors: {
-        origin: `${import.meta.env.VITE_NETLIFY_DOMAIN}`,
+        origin: ['http://localhost:5173', 'https://ajay-bhargava-matching-game.netlify.app'],
         methods: ['GET', 'POST'],
     },
 })
